@@ -119,20 +119,18 @@ This project builds and evaluates multiple deep learning models capable of:
 The Project is deployed using Streamlit for an interactive and user-friendly web interface..
 
 🔗 **Live Deployment:**  
-👉 **[Deployment Link Here]**  
 
 
 ---
-
 ## Team Members
 
 | Name | GitHub |
-|-----|-------|
-| **Toka Khaled** | https://github.com/USERNAME |
-| **Jana Essam** | https://github.com/USERNAME |
-| **Jana Hany** | https://github.com/USERNAME |
-| **Manar Mostafa** | https://github.com/USERNAME |
-| **Rana Nasser** | https://github.com/USERNAME |
-| **Rawan Mohamed Taha** | https://github.com/USERNAME |
+|-----|--------|
+| **Toka Khaled** | [TokaKhaled4](https://github.com/TokaKhaled4) |
+| **Jana Essam** | [janaessam31](https://github.com/janaessam31) |
+| **Jana Hany** | [JH-33](https://github.com/JH-33) |
+| **Manar Mostafa** | [2004Manar](https://github.com/2004Manar) |
+| **Rana Nasser** | [rananasser760](https://github.com/rananasser760) |
+| **Rawan Mohamed Taha** | [rawanmohamed2023](https://github.com/rawanmohamed2023) |
 
 
