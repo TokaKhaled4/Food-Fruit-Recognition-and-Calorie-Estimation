@@ -3,7 +3,7 @@
 A comprehensive **Computer Vision pipeline** for food and fruit recognition, few-shot learning, and segmentation using modern deep learning architectures.  
 This project explores multiple tasks including binary classification, multi-class classification, metric learning, and semantic segmentation, aiming toward an end-to-end system for **diet analysis and calorie estimation**.
 
----
+
 
 ## Project Overview
 
@@ -16,7 +16,6 @@ This project builds and evaluates multiple deep learning models capable of:
 - Segmenting fruit items from images
 - Preparing the foundation for calorie estimation pipelines
 
----
 ## Dataset Overview
 
 - **Food Training Images:** 2538  
@@ -30,7 +29,7 @@ This project builds and evaluates multiple deep learning models capable of:
 - Extensive data augmentation
 - Class balancing
 
----
+
 ## Tasks & Models
 
 ### **Part A – Binary Classification (Food vs Fruit)**
@@ -46,7 +45,7 @@ This project builds and evaluates multiple deep learning models capable of:
 - Data Augmentation
 - ReduceLROnPlateau Scheduler
 
----
+
 
 ### **Part B – Few-Shot Food Recognition**
 **Model**
@@ -63,7 +62,7 @@ This project builds and evaluates multiple deep learning models capable of:
 - L2-Normalized Embeddings
 - Euclidean Distance Comparison
 
----
+
 
 ### **Part C – Multi-Class Classification On Fruits**
 **Models Used**
@@ -79,7 +78,7 @@ This project builds and evaluates multiple deep learning models capable of:
 - Dropout Regularization
 - GELU & Layer Normalization
 
----
+
 
 ### **Part D – Binary Segmentation On Fruits**
 **Models Used**
@@ -92,7 +91,7 @@ This project builds and evaluates multiple deep learning models capable of:
 - Skip Connections
 - Atrous Spatial Pyramid Pooling (ASPP)
 
----
+
 
 ### **Part E – Multi Segmentation On Fruits**
 **Model**
@@ -103,25 +102,23 @@ This project builds and evaluates multiple deep learning models capable of:
 - U-Net-style Skip Connections
 - Decoder Feature Refinement
 
----
 
-## 📊 Evaluation & Visualization
+
+## Evaluation & Visualization
 
 - Accuracy, Precision, Recall
 - Training vs Validation Curves
 - Siamese embedding distance analysis
 - Segmentation output visualizations
 
----
 
-## 🚀 Deployment
+## Deployment
 
 The Project is deployed using Streamlit for an interactive and user-friendly web interface..
 
 🔗 [Launch the App](https://)
 
 
----
 ## Team Members
 
 - **[Toka Khaled](https://github.com/TokaKhaled4)**
