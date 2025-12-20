@@ -124,13 +124,11 @@ The Project is deployed using Streamlit for an interactive and user-friendly web
 ---
 ## Team Members
 
-| Name | GitHub |
-|-----|--------|
-| **Toka Khaled** | [TokaKhaled4](https://github.com/TokaKhaled4) |
-| **Jana Essam** | [janaessam31](https://github.com/janaessam31) |
-| **Jana Hany** | [JH-33](https://github.com/JH-33) |
-| **Manar Mostafa** | [2004Manar](https://github.com/2004Manar) |
-| **Rana Nasser** | [rananasser760](https://github.com/rananasser760) |
-| **Rawan Mohamed Taha** | [rawanmohamed2023](https://github.com/rawanmohamed2023) |
+- **[Toka Khaled](https://github.com/TokaKhaled4)**
+- **[Jana Essam](https://github.com/janaessam31)**
+- **[Jana Hani](https://github.com/JH-33)**
+- **[Manar Mostafa](https://github.com/2004Manar)**
+- **[Rana Nasser](https://github.com/rananasser760)**
+- **[Rawan Taha](https://github.com/rawanmohamed2023)**
 
 
