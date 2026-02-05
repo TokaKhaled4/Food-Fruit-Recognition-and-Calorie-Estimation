@@ -1,3 +1,4 @@
+# ======================== PIPELINE ========================
 import os
 import re
 import json
@@ -24,43 +25,38 @@ import open_clip
 # ======================== CONFIG ========================
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ------------------ Kaggle dataset download ------------------
-DATA_DIR = "Project Data"
-KAGGLE_DATASET = "tokakhaled44/cv-project-dataset"
-
-if not os.path.exists(DATA_DIR):
-    os.makedirs(DATA_DIR, exist_ok=True)
-    print(f"Downloading dataset from Kaggle...")
-    os.system(f"kaggle datasets download -d {KAGGLE_DATASET} -p {DATA_DIR} --unzip")
-else:
-    print(f"{DATA_DIR} already exists, skipping download.")
-
-# ======================== FOOD/FRUIT CLASSIFIER ========================
+# Food/Fruit classifier
 FOOD_FRUIT_MODEL_PATH = "Models/part_a_best_mobilenet.pth"
 IMG_SIZE_FF = 224
 
+# Fruit classifier
 FRUIT_MODEL_PATH = "Models/MobileNetV2_PartC.keras"
-TRAIN_DIR_FRUIT = os.path.join(DATA_DIR, "Fruit", "Train")
+TRAIN_DIR_FRUIT = "Project Data/Fruit/Train"
 IMG_SIZE_FRUIT = 350
 
-TRAIN_DIR_FOOD = os.path.join(DATA_DIR, "Food", "Train")
-VALID_DIR_FOOD = os.path.join(DATA_DIR, "Food", "Validation")
+# Food directories for CLIP representatives
+TRAIN_DIR_FOOD = "Project Data/Food/Train"
+VALID_DIR_FOOD = "Project Data/Food/Validation"
 
-FOOD_CALORIES_FILE_TRAIN = os.path.join(DATA_DIR, "Food", "Train Calories.txt")
-FOOD_CALORIES_FILE_VALID = os.path.join(DATA_DIR, "Food", "Val Calories.txt")
-FRUIT_CALORIES_FILE = os.path.join(DATA_DIR, "Fruit", "Calories.txt")
+# Calories
+FOOD_CALORIES_FILE_TRAIN = "Project Data/Food/Train Calories.txt"
+FOOD_CALORIES_FILE_VALID = "Project Data/Food/Val Calories.txt"
+FRUIT_CALORIES_FILE = "Project Data/Fruit/Calories.txt"
 
+# Binary segmentation
 SEG_MODEL_PATH = "Models/segnet_best.keras"
 SEG_IMAGE_SIZE = (256, 256)
 
+# Multi-class segmentation
 MULTI_SEG_MODEL_PATH = "Models/best_multiclass_resnet50_unet.keras"
 CLASS_MAPPING_FILE = "Models/class_mapping.json"
 COLOR_MAPPING_FILE = "Models/color_mapping.json"
 MULTI_SEG_IMG_SIZE = 224
 
+# CLIP model
 FINETUNED_MODEL_PATH = "Models/clip_finetuned_5_Shots.pth"
 
-# ------------------ Food/Fruit classifier ------------------
+# ======================== FOOD/FRUIT CLASSIFIER ========================
 class FoodFruitClassifier(nn.Module):
     def __init__(self):
         super().__init__()
@@ -72,6 +68,7 @@ class FoodFruitClassifier(nn.Module):
     def forward(self, x):
         return self.mobilenet(x)
 
+# Load Food/Fruit model
 food_fruit_model = FoodFruitClassifier()
 checkpoint = torch.load(FOOD_FRUIT_MODEL_PATH, map_location=DEVICE)
 food_fruit_model.load_state_dict(checkpoint["model_state_dict"])
@@ -92,13 +89,9 @@ def predict_food_or_fruit(img_path):
         pred = torch.argmax(out, dim=1).item()
     return "Food" if pred == 0 else "Fruit"
 
-# ------------------ Fruit classifier ------------------
-if not os.path.exists(TRAIN_DIR_FRUIT):
-    print(f"Warning: {TRAIN_DIR_FRUIT} not found. Skipping fruit classification.")
-    fruit_classes = []
-else:
-    fruit_model = tf.keras.models.load_model(FRUIT_MODEL_PATH)
-    fruit_classes = sorted([d for d in os.listdir(TRAIN_DIR_FRUIT) if os.path.isdir(os.path.join(TRAIN_DIR_FRUIT, d))])
+# ======================== FRUIT CLASSIFICATION ========================
+fruit_model = tf.keras.models.load_model(FRUIT_MODEL_PATH)
+fruit_classes = sorted([d for d in os.listdir(TRAIN_DIR_FRUIT) if os.path.isdir(os.path.join(TRAIN_DIR_FRUIT, d))])
 
 def preprocess_fruit(img_path):
     img = image.load_img(img_path, target_size=(IMG_SIZE_FRUIT, IMG_SIZE_FRUIT))
@@ -110,12 +103,9 @@ def recognize_fruit(img_path):
     pred = fruit_model.predict(preprocess_fruit(img_path), verbose=0)
     return fruit_classes[np.argmax(pred)]
 
-# ------------------ Calories ------------------
+# ======================== CALORIES ========================
 def load_calories(file_path):
     calories = {}
-    if not os.path.exists(file_path):
-        print(f"Warning: {file_path} not found!")
-        return calories
     with open(file_path) as f:
         for line in f:
             m = re.match(r"(.+?):\s*~?([\d.]+)", line.strip())
@@ -131,9 +121,9 @@ fruit_calories = load_calories(FRUIT_CALORIES_FILE)
 
 def extract_grams(name):
     m = re.search(r"(\d+)g", name)
-    return int(m.group(1)) if m else 100
+    return int(m.group(1)) if m else 100  # default 100g
 
-# ------------------ Binary segmentation ------------------
+# ======================== BINARY SEGMENTATION ========================
 seg_model = tf.keras.models.load_model(SEG_MODEL_PATH, compile=False)
 
 def run_binary_segmentation(img_path, save_dir):
@@ -152,7 +142,7 @@ def run_binary_segmentation(img_path, save_dir):
     cv2.imwrite(save_path, mask_final)
     return save_path
 
-# ------------------ Multi-class segmentation ------------------
+# ======================== MULTI-CLASS SEGMENTATION ========================
 with open(CLASS_MAPPING_FILE) as f: class_mapping = json.load(f)
 with open(COLOR_MAPPING_FILE) as f: color_mapping = json.load(f)
 reverse_mapping = {v:k for k,v in class_mapping.items()}
@@ -267,7 +257,7 @@ def run_multiclass_segmentation(img_path, save_dir):
     cv2.imwrite(save_path, result_img)
     return save_path
 
-# ------------------ CLIP Food Recognition ------------------
+# ======================== CLIP FOOD RECOGNITION ========================
 clip_model, _, preprocess_clip = open_clip.create_model_and_transforms(
     model_name="ViT-B-32",
     pretrained="openai"
@@ -311,7 +301,7 @@ def recognize_food_clip(img_path):
                 best_cls = cls
     return best_cls
 
-# ------------------ FULL PIPELINE ------------------
+# ======================== FULL PIPELINE ========================
 def predict_image(img_path, output_dir):
     os.makedirs(output_dir, exist_ok=True)
     result = {}
@@ -325,8 +315,8 @@ def predict_image(img_path, output_dir):
         sub_class = recognize_food_clip(img_path)
         cal = food_calories.get(sub_class.lower().replace(" ","_"),0)
     else:
-        sub_class = recognize_fruit(img_path) if fruit_classes else None
-        cal = fruit_calories.get(sub_class.lower().replace(" ","_"),0) if sub_class else 0
+        sub_class = recognize_fruit(img_path)
+        cal = fruit_calories.get(sub_class.lower().replace(" ","_"),0)
     result['sub_class'] = sub_class
 
     # Step 3: Compute calories
@@ -335,7 +325,7 @@ def predict_image(img_path, output_dir):
     result['total_calories'] = grams*cal
 
     # Step 4: Segmentation (for fruits)
-    if main_class == "Fruit" and sub_class:
+    if main_class == "Fruit":
         binary_mask_path = run_binary_segmentation(img_path, output_dir)
         multi_mask_path = run_multiclass_segmentation(img_path, output_dir)
         result['binary_mask'] = binary_mask_path
