@@ -114,10 +114,7 @@ This project builds and evaluates multiple deep learning models capable of:
 
 ## Deployment
 
-The Project is deployed using Streamlit for an interactive and user-friendly web interface..
-
-🔗 [Launch the App](https://)
-
+The Project is deployed using Streamlit for an interactive and user-friendly web interface.
 
 ## Team Members
 
