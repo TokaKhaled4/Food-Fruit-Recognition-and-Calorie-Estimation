@@ -1,4 +1,6 @@
 # ======================== PIPELINE ========================
+!pip install rarfile
+
 import os
 import re
 import json
@@ -7,7 +9,7 @@ import cv2
 import numpy as np
 from glob import glob
 from PIL import Image
-import zipfile
+import rarfile
 
 import torch
 import torch.nn as nn
@@ -26,15 +28,18 @@ import open_clip
 # ======================== CONFIG ========================
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def unzip_if_needed(zip_file, target_folder):
-    if not os.path.exists(target_folder) and os.path.exists(zip_file):
-        print(f"Unzipping {zip_file} ...")
-        with zipfile.ZipFile(zip_file, 'r') as z:
-            z.extractall(".")
-        print("Done extracting.")
+def extract_if_needed(archive_file, target_folder):
+    if os.path.exists(target_folder):
+        return
+    if not os.path.exists(archive_file):
+        return
+    print(f"Extracting {archive_file} ...")
+    with rarfile.RarFile(archive_file) as r:
+        r.extractall(".")
+    print("Extraction finished.")
 
 # Auto-unzip data if running on Streamlit/GitHub
-unzip_if_needed("Project_Data.rar", "Project Data")
+extract_if_needed("Project_Data.rar", "Project Data")
 
 # Food/Fruit classifier
 FOOD_FRUIT_MODEL_PATH = "Models/part_a_best_mobilenet.pth"
@@ -350,6 +355,7 @@ def predict_image(img_path, output_dir):
         f.write(f"{main_class}\n{sub_class}\n{result['total_calories']:.2f}\n")
 
     return result
+
 
 
 
