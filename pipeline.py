@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from glob import glob
 from PIL import Image
-import rarfile
+import zipfile
 
 import torch
 import torch.nn as nn
@@ -26,18 +26,22 @@ import open_clip
 # ======================== CONFIG ========================
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def extract_if_needed(archive_file, target_folder):
-    if os.path.exists(target_folder):
-        return
-    if not os.path.exists(archive_file):
-        return
-    print(f"Extracting {archive_file} ...")
-    with rarfile.RarFile(archive_file) as r:
-        r.extractall(".")
-    print("Extraction finished.")
+def ensure_unzipped(zip_path, extract_to):
+    """
+    Unzips zip_path into extract_to if not already extracted.
+    """
+    if os.path.exists(extract_to):
+        return  # already unzipped
 
-# Auto-unzip data if running on Streamlit/GitHub
-extract_if_needed("Project_Data.rar", "Project Data")
+    if os.path.exists(zip_path):
+        print(f"Unzipping {zip_path} ...")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_to)
+        print("Extraction done.")
+    else:
+        print(f"Warning: {zip_path} not found.")
+        
+ensure_unzipped("Project_Data.zip", "Project Data")
 
 # Food/Fruit classifier
 FOOD_FRUIT_MODEL_PATH = "Models/part_a_best_mobilenet.pth"
@@ -353,6 +357,7 @@ def predict_image(img_path, output_dir):
         f.write(f"{main_class}\n{sub_class}\n{result['total_calories']:.2f}\n")
 
     return result
+
 
 
 
