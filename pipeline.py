@@ -351,3 +351,4 @@ def predict_image(img_path, output_dir):
 
     return result
 
+
