@@ -29,17 +29,30 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def ensure_unzipped(zip_path, extract_to):
     """
     Unzips zip_path into extract_to if not already extracted.
+    Automatically removes top-level folder inside the zip.
     """
-    if os.path.exists(extract_to):
-        return  # already unzipped
+    if os.path.exists(extract_to) and any(os.listdir(extract_to)):
+        return  # already extracted
 
-    if os.path.exists(zip_path):
-        print(f"Unzipping {zip_path} ...")
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to)
-        print("Extraction done.")
-    else:
+    if not os.path.exists(zip_path):
         print(f"Warning: {zip_path} not found.")
+        return
+
+    print(f"Unzipping {zip_path} ...")
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        # detect top-level folder
+        members = zip_ref.namelist()
+        top_level = members[0].split("/")[0]
+        for member in members:
+            # remove top-level folder
+            filename = "/".join(member.split("/")[1:])
+            if filename:
+                target_path = os.path.join(extract_to, filename)
+                os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                with open(target_path, "wb") as f:
+                    f.write(zip_ref.read(member))
+    print("Extraction done.")
+
         
 ensure_unzipped("Project_Data.zip", "Project Data")
 
@@ -49,17 +62,17 @@ IMG_SIZE_FF = 224
 
 # Fruit classifier
 FRUIT_MODEL_PATH = "Models/MobileNetV2_PartC.keras"
-TRAIN_DIR_FRUIT = "Project Data/Project_Data/Fruit/Train"
+TRAIN_DIR_FRUIT = "Project Data/Fruit/Train"
 IMG_SIZE_FRUIT = 350
 
 # Food directories for CLIP representatives
-TRAIN_DIR_FOOD = "Project Data/Project_Data/Food/Train"
-VALID_DIR_FOOD = "Project Data/Project_Data/Food/Validation"
+TRAIN_DIR_FOOD = "Project Data/Food/Train"
+VALID_DIR_FOOD = "Project Data/Food/Validation"
 
 # Calories
-FOOD_CALORIES_FILE_TRAIN = "Project Data/Project_Data/Food/Train Calories.txt"
-FOOD_CALORIES_FILE_VALID = "Project Data/Project_Data/Food/Val Calories.txt"
-FRUIT_CALORIES_FILE = "Project Data/Project_Data/Fruit/Calories.txt"
+FOOD_CALORIES_FILE_TRAIN = "Project Data/Food/Train Calories.txt"
+FOOD_CALORIES_FILE_VALID = "Project Data/Food/Val Calories.txt"
+FRUIT_CALORIES_FILE = "Project Data/Fruit/Calories.txt"
 
 # Binary segmentation
 SEG_MODEL_PATH = "Models/segnet_best.keras"
@@ -357,6 +370,7 @@ def predict_image(img_path, output_dir):
         f.write(f"{main_class}\n{sub_class}\n{result['total_calories']:.2f}\n")
 
     return result
+
 
 
 
