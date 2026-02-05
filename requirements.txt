@@ -1,0 +1,10 @@
+torch
+torchvision
+tensorflow
+opencv-python
+numpy
+pillow
+scikit-image
+scipy
+open-clip-torch
+glob2
