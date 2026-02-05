@@ -8,3 +8,4 @@ scikit-image
 scipy
 open-clip-torch
 glob2
+kaggle
