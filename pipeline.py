@@ -6,7 +6,6 @@ import cv2
 import numpy as np
 from glob import glob
 from PIL import Image
-import zipfile
 
 import torch
 import torch.nn as nn
@@ -25,63 +24,31 @@ import open_clip
 # ======================== CONFIG ========================
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def ensure_unzipped(zip_path, extract_to):
-    """
-    Unzips zip_path into extract_to if not already extracted.
-    Ensures the folder structure matches what the code expects.
-    Works whether the zip has a top-level folder or not.
-    """
-    if os.path.exists(extract_to) and any(os.listdir(extract_to)):
-        print(f"{extract_to} already exists, skipping unzip.")
-        return
+# ------------------ Kaggle dataset download ------------------
+DATA_DIR = "Project Data"
+KAGGLE_DATASET = "tokakhaled44/cv-project-dataset"
 
-    if not os.path.exists(zip_path):
-        print(f"Warning: {zip_path} not found.")
-        return
-
-    print(f"Unzipping {zip_path} ...")
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        members = zip_ref.namelist()
-        if not members:
-            print("Zip is empty!")
-            return
-
-        # detect top-level folder
-        top_level = os.path.commonprefix(members).split("/")[0]
-
-        for member in members:
-            if member.endswith("/"):
-                continue  # skip directories
-            parts = member.split("/")
-            if parts[0] == top_level:
-                relative_path = os.path.join(*parts[1:])
-            else:
-                relative_path = member
-            target_path = os.path.join(extract_to, relative_path)
-            os.makedirs(os.path.dirname(target_path), exist_ok=True)
-            with open(target_path, "wb") as f:
-                f.write(zip_ref.read(member))
-
-    print(f"Extraction done to {extract_to}.")
-    print(f"Top-level folders: {os.listdir(extract_to)}")
-
-# Unzip Project_Data.zip safely
-ensure_unzipped("Project_Data.zip", "Project Data")
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR, exist_ok=True)
+    print(f"Downloading dataset from Kaggle...")
+    os.system(f"kaggle datasets download -d {KAGGLE_DATASET} -p {DATA_DIR} --unzip")
+else:
+    print(f"{DATA_DIR} already exists, skipping download.")
 
 # ======================== FOOD/FRUIT CLASSIFIER ========================
 FOOD_FRUIT_MODEL_PATH = "Models/part_a_best_mobilenet.pth"
 IMG_SIZE_FF = 224
 
 FRUIT_MODEL_PATH = "Models/MobileNetV2_PartC.keras"
-TRAIN_DIR_FRUIT = "Project Data/Fruit/Train"
+TRAIN_DIR_FRUIT = os.path.join(DATA_DIR, "Fruit", "Train")
 IMG_SIZE_FRUIT = 350
 
-TRAIN_DIR_FOOD = "Project Data/Food/Train"
-VALID_DIR_FOOD = "Project Data/Food/Validation"
+TRAIN_DIR_FOOD = os.path.join(DATA_DIR, "Food", "Train")
+VALID_DIR_FOOD = os.path.join(DATA_DIR, "Food", "Validation")
 
-FOOD_CALORIES_FILE_TRAIN = "Project Data/Food/Train Calories.txt"
-FOOD_CALORIES_FILE_VALID = "Project Data/Food/Val Calories.txt"
-FRUIT_CALORIES_FILE = "Project Data/Fruit/Calories.txt"
+FOOD_CALORIES_FILE_TRAIN = os.path.join(DATA_DIR, "Food", "Train Calories.txt")
+FOOD_CALORIES_FILE_VALID = os.path.join(DATA_DIR, "Food", "Val Calories.txt")
+FRUIT_CALORIES_FILE = os.path.join(DATA_DIR, "Fruit", "Calories.txt")
 
 SEG_MODEL_PATH = "Models/segnet_best.keras"
 SEG_IMAGE_SIZE = (256, 256)
