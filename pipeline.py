@@ -1,6 +1,4 @@
 # ======================== PIPELINE ========================
-!pip install rarfile
-
 import os
 import re
 import json
@@ -355,6 +353,7 @@ def predict_image(img_path, output_dir):
         f.write(f"{main_class}\n{sub_class}\n{result['total_calories']:.2f}\n")
 
     return result
+
 
 
 
