@@ -1,7 +1,7 @@
 torch
 torchvision
 tensorflow
-opencv-python
+opencv-python-headless
 numpy
 pillow
 scikit-image
