@@ -29,7 +29,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def ensure_unzipped(zip_path, extract_to):
     """
     Unzips zip_path into extract_to if not already extracted.
-    Automatically removes top-level folder inside the zip.
+    Automatically handles zips with or without a top-level folder.
     """
     if os.path.exists(extract_to) and any(os.listdir(extract_to)):
         return  # already extracted
@@ -40,17 +40,28 @@ def ensure_unzipped(zip_path, extract_to):
 
     print(f"Unzipping {zip_path} ...")
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        # detect top-level folder
+        # detect top-level folder in the zip
         members = zip_ref.namelist()
+        if not members:
+            print("Zip is empty!")
+            return
+
         top_level = members[0].split("/")[0]
+
         for member in members:
-            # remove top-level folder
-            filename = "/".join(member.split("/")[1:])
-            if filename:
+            # remove top-level folder if it matches extract_to's basename
+            parts = member.split("/")
+            if parts[0] == os.path.basename(extract_to):
+                filename = "/".join(parts[1:])
+            else:
+                filename = member
+
+            if filename:  # skip empty paths
                 target_path = os.path.join(extract_to, filename)
                 os.makedirs(os.path.dirname(target_path), exist_ok=True)
                 with open(target_path, "wb") as f:
                     f.write(zip_ref.read(member))
+
     print("Extraction done.")
 
         
@@ -370,6 +381,7 @@ def predict_image(img_path, output_dir):
         f.write(f"{main_class}\n{sub_class}\n{result['total_calories']:.2f}\n")
 
     return result
+
 
 
 
