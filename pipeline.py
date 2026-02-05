@@ -49,17 +49,17 @@ IMG_SIZE_FF = 224
 
 # Fruit classifier
 FRUIT_MODEL_PATH = "Models/MobileNetV2_PartC.keras"
-TRAIN_DIR_FRUIT = "Project Data/Fruit/Train"
+TRAIN_DIR_FRUIT = "Project Data/Project_Data/Fruit/Train"
 IMG_SIZE_FRUIT = 350
 
 # Food directories for CLIP representatives
-TRAIN_DIR_FOOD = "Project Data/Food/Train"
-VALID_DIR_FOOD = "Project Data/Food/Validation"
+TRAIN_DIR_FOOD = "Project Data/Project_Data/Food/Train"
+VALID_DIR_FOOD = "Project Data/Project_Data/Food/Validation"
 
 # Calories
-FOOD_CALORIES_FILE_TRAIN = "Project Data/Food/Train Calories.txt"
-FOOD_CALORIES_FILE_VALID = "Project Data/Food/Val Calories.txt"
-FRUIT_CALORIES_FILE = "Project Data/Fruit/Calories.txt"
+FOOD_CALORIES_FILE_TRAIN = "Project Data/Project_Data/Food/Train Calories.txt"
+FOOD_CALORIES_FILE_VALID = "Project Data/Project_Data/Food/Val Calories.txt"
+FRUIT_CALORIES_FILE = "Project Data/Project_Data/Fruit/Calories.txt"
 
 # Binary segmentation
 SEG_MODEL_PATH = "Models/segnet_best.keras"
@@ -357,6 +357,7 @@ def predict_image(img_path, output_dir):
         f.write(f"{main_class}\n{sub_class}\n{result['total_calories']:.2f}\n")
 
     return result
+
 
 
 
