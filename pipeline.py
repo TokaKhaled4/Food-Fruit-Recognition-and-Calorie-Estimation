@@ -34,7 +34,7 @@ def unzip_if_needed(zip_file, target_folder):
         print("Done extracting.")
 
 # Auto-unzip data if running on Streamlit/GitHub
-unzip_if_needed("Project_Data.zip", "Project Data")
+unzip_if_needed("Project_Data.rar", "Project Data")
 
 # Food/Fruit classifier
 FOOD_FRUIT_MODEL_PATH = "Models/part_a_best_mobilenet.pth"
@@ -350,5 +350,6 @@ def predict_image(img_path, output_dir):
         f.write(f"{main_class}\n{sub_class}\n{result['total_calories']:.2f}\n")
 
     return result
+
 
 
